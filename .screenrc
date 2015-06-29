@@ -1,0 +1,32 @@
+startup_message off
+vbell on
+hardstatus alwayslastline
+altscreen on
+defscrollback 10000
+
+# rafraichit toutes les 10 secondes la ram et le loadavg
+backtick 1 10 10 awk '{print $1}' /proc/loadavg
+backtick 2 10 10 awk '{ if($1=="MemTotal:") {t=$2} if($1=="MemFree:") {f=$2} if($1=="Buffers:") {b=$2} if($1=="Cached:") {c=$2} } END {printf("%d%%",100*(t-f-b-c)/t)}' /proc/meminfo
+term "screen-256color"
+
+hardstatus string '%{= kG}[%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}[%{W}%1`|%2` %{g}%H|%{B}%d/%m %{W}%c:%s%{g}]'
+#
+#
+## j to move down a window, k to move up. Like teh VIM!
+bind j focus down
+bind k focus up
+
+screen -t htop 0 htop
+screen -t bash 1 bash
+
+# This is for mouse scroll-wheel support.
+# Tell screen that xterm can scroll.
+termcapinfo xterm ti@:te@
+
+
+#hardstatus alwayslastline
+#hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{=kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B}%Y-%m-%d %{W}%c %{g}]'
+# Default screens
+#screen -t shell1	0
+#screen -t shell2	1
+#screen -t server	2	ssh eos11 
