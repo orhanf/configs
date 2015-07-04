@@ -14,7 +14,7 @@ from theano.gof import EquilibriumDB, SequenceDB
 from theano.gof.cmodule import get_lib_extension
 from theano.gof.compilelock import get_lock, release_lock
 from theano.configparser import config, AddConfigVar, StrParam, BoolParam
-import nvcc_compiler
+from . import nvcc_compiler
 
 # ignore_newtrees is to speed the optimization as this is the pattern
 # we use for optimization. Otherwise, we can iterate 100s of time on
@@ -27,10 +27,11 @@ def register_opt(*tags, **kwargs):
     if any([not isinstance(t, str) for t in tags]):
         raise RuntimeError("Bad call to register_opt."
                            " All tags must be strings.", tags)
+
     def f(local_opt):
         name = (kwargs and kwargs.pop('name')) or local_opt.__name__
         gpu_optimizer.register(name, local_opt, 'fast_run', 'fast_compile',
-                               'gpu', *tags)
+                               'gpu', *tags, **kwargs)
         return local_opt
     return f
 
